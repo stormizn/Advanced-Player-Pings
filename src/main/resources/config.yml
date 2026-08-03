@@ -1,0 +1,6 @@
+database:
+  file-name: "pings.db"
+
+messages:
+  no-record: "&eNo recorded ping for &6%player%&e yet!"
+  result: "&a%player%&7's ping: &b%ping%ms &7(last seen %time%)"

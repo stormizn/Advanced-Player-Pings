@@ -1,0 +1,11 @@
+name: Ping-Plugin
+version: '${version}'
+main: me.stormizn.eldenstead.PingPlugin
+api-version: '26.2'
+author: stormizn
+description: ping plugin
+
+commands:
+  ping:
+    description: Show a player's most recent ping and store it.
+    usage: /ping <player>
