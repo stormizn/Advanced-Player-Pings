@@ -1,6 +1,23 @@
+# AdvancedPlayerPings configuration.
+#
+# Colours use the legacy '&' syntax (e.g. &a, &6, &7).
+# Placeholders: %player%, %ping%, %time%, %seconds%.
+#
+# Messages are re-read by "/ping reload"; database.file-name needs a restart.
+
 database:
+  # SQLite file, created inside plugins/AdvancedPlayerPings/.
   file-name: "pings.db"
 
+# Minimum delay between two "/ping <player>" calls by the same player, in seconds.
+# 0 disables the cooldown. Console senders are never rate limited.
+cooldown-seconds: 1
+
 messages:
+  result: "&a%player%&7's ping: &b%ping%ms &7(recorded %time%)"
   no-record: "&eNo recorded ping for &6%player%&e yet!"
-  result: "&a%player%&7's ping: &b%ping%ms &7(last seen %time%)"
+  unknown-player: "&eNo player called &6%player%&e has ever joined this server."
+  error: "&cCouldn't read the ping database, please try again later."
+  cooldown: "&ePlease wait &6%seconds%s&e before using /ping again."
+  no-permission: "&cYou don't have permission to do that."
+  reloaded: "&aPing configuration reloaded."

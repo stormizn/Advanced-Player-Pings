@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "me.stormizn"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -19,12 +19,21 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:26.2.build.92-stable")
 
     //database
-    implementation("com.zaxxer:HikariCP:5.1.0")
-    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
+    // Paper already ships org.slf4j:slf4j-api (it is a paper-api dependency), so the
+    // copies HikariCP and sqlite-jdbc drag in must not end up inside the shaded jar:
+    // a plugin-local slf4j-api shadows the server one and silences pool logging.
+    implementation("com.zaxxer:HikariCP:5.1.0") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
 
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // Paper supplies this at runtime; tests need it because HikariCP reads it on class load.
+    testRuntimeOnly("org.slf4j:slf4j-api:2.0.17")
 }
 
 java {
@@ -34,6 +43,7 @@ java {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.compilerArgs.add("-parameters")
+    options.compilerArgs.add("-Xlint:deprecation")
 }
 
 tasks.processResources {
@@ -44,10 +54,16 @@ tasks.processResources {
     }
 }
 
+// The shaded jar is the only artifact we ship; leaving the plain jar enabled would
+// make both tasks write the same file name and silently overwrite one another.
+tasks.jar {
+    enabled = false
+}
+
 tasks.shadowJar {
     archiveClassifier.set("")
 
-    relocate("com.zaxxer.hikari", "me.stormizn.eldenstead.libs.hikari")
+    relocate("com.zaxxer.hikari", "me.stormizn.playerpings.libs.hikari")
 }
 
 tasks.build {

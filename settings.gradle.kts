@@ -1,1 +1,1 @@
-rootProject.name = "endenstead-application"
+rootProject.name = "advanced-player-pings"
